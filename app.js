@@ -10,6 +10,8 @@ app.use(express.json());
 var cors = require('cors');
 app.use(cors());
 
+require("dotenv").config();
+
 mongoose.connect('mongodb+srv://prabhash:prabhash@cluster0.cucjq6t.mongodb.net/?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true });
 
 app.get('/', function(req, res) {
@@ -305,6 +307,8 @@ Orders.updateOne(
 
 
 
-app.listen(3001,(req,res)=>{
-    console.log("listening on port 3001")
-})
+const port = process.env.PORT || 3001;
+
+app.listen(port, () => {
+  console.log("App listening on port 3001");
+});
