@@ -307,6 +307,536 @@ Orders.updateOne(
 
 
 
+
+// For Admin Page
+app.get("/getordersforadmin",(req,res)=>{
+    Orders.find({},(err,orders)=>{
+        if(err){
+            res.json(null);
+        }else{
+            console.log(orders);
+            res.json(orders);
+        }
+    }
+    )
+}
+)
+
+
+// get all employees
+app.get("/getemployeesforadmin",(req,res)=>{
+    Employees.find({},(err,employees)=>{
+        if(err){
+            res.json(null);
+        }else{
+            console.log(employees);
+            res.json(employees);
+        }
+    }
+    )
+}
+)
+
+
+// get all users
+app.get("/getusersforadmin",(req,res)=>{
+    Users.find({},(err,users)=>{
+        if(err){
+            res.json(null);
+        }else{
+            console.log(users);
+            res.json(users);
+        }
+    }
+    )
+}
+)
+
+// get messages for admin
+app.get("/getmessagesforadmin",(req,res)=>{
+    Messages.find({},(err,messages)=>{
+        if(err){
+            res.json(null);
+        }else{
+            console.log(messages);
+            res.json(messages);
+        }
+    }
+    )
+}
+)
+
+
+
+
+
+// filter customers by first name , last name , email , phone, city, state, pincode
+app.get("/filtercustomersforadmin", (req,res)=>{
+
+    let filter = req.query.filter;
+    let search = req.query.search;
+
+    console.log("Filter",filter);
+    console.log("Search",search);
+
+    if(search == ""){
+        Users.find({},(err,users)=>{
+            if(err){
+                res.json(null);
+            }else{
+                console.log(users);
+                res.json(users);
+            }
+        }
+        )
+    }
+    else if(filter == "firstName"){
+        Users.find({firstName:search},(err,users)=>{
+            if(err){
+                res.json(null);
+            }else{
+                console.log(users);
+                res.json(users);
+            }
+        }
+        )
+    }else if(filter == "lastName"){
+        Users.find({lastName:search},(err,users)=>{
+            if(err){
+                res.json(null);
+            }else{
+                console.log(users);
+                res.json(users);
+            }
+        }
+        )
+    }else if(filter == "email"){
+        Users.find({email:search},(err,users)=>{
+            if(err){
+                res.json(null);
+            }else{
+                console.log(users);
+                res.json(users);
+            }
+        }
+        )
+    }else if(filter == "phone"){
+        Users.find({phone:search},(err,users)=>{
+            if(err){
+                res.json(null);
+            }else{
+                console.log(users);
+                res.json(users);
+            }
+        }
+        )
+    }else if(filter == "city"){
+        Users.find({city:search},(err,users)=>{
+            if(err){
+                res.json(null);
+            }else{
+                console.log(users);
+                res.json(users);
+            }
+        }
+        )
+    }else if(filter == "state"){
+        Users.find({state:search},(err,users)=>{
+            if(err){
+                res.json(null);
+            }else{
+                console.log(users);
+                res.json(users);
+            }
+        }
+        )
+    }else if(filter == "pincode"){
+        Users.find({pincode:search},(err,users)=>{
+            if(err){
+                res.json(null);
+            }else{
+                console.log(users);
+                res.json(users);
+            }
+        }
+        )
+    }
+
+
+
+
+   
+
+
+})
+
+
+
+
+
+
+
+
+
+// filter employees by first name , last name , gender, profession, email , phone, city, state, pincode
+app.get("/filteremployeesforadmin", (req,res)=>{
+    let filter = req.query.filter;
+    let search = req.query.search;
+
+    console.log("Filter",filter);
+    console.log("Search",search);
+
+    if(search==""){
+        Employees.find({},(err,employees)=>{
+            if(err){
+                res.json(null);
+            }else{
+                console.log(employees);
+                res.json(employees);
+            }
+        }
+        )
+    }
+    else if(filter=="firstName"){
+        Employees.find({firstName:search},(err,employees)=>{
+            if(err){
+                res.json(null);
+            }else{
+                console.log(employees);
+                res.json(employees);
+            }
+        })
+    }
+    else if(filter=="lastName"){
+        Employees.find({lastName:search},(err,employees)=>{
+            if(err){
+                res.json(null);
+            }else{
+                console.log(employees);
+                res.json(employees);
+            }
+        }
+        )
+    }
+    else if(filter=="gender"){
+        Employees.find({gender:search},(err,employees)=>{
+            if(err){
+                res.json(null);
+            }else{
+                console.log(employees);
+                res.json(employees);
+            }
+    })
+    }
+    else if(filter=="profession"){
+        Employees.find({profession:search},(err,employees)=>{
+            if(err){
+                res.json(null);
+            }else{
+                console.log(employees);
+                res.json(employees);
+            }
+        }
+        )
+    }
+    else if(filter=="email"){
+        Employees.find({ email:search},(err,employees)=>{
+            if(err){
+                res.json(null);
+            }else{
+                console.log(employees);
+                res.json(employees);
+            }
+        }
+        )
+    }
+    else if(filter=="phone"){
+        Employees.find({phone:search},(err,employees)=>{
+            if(err){
+                res.json(null);
+            }else{
+                console.log(employees);
+                res.json(employees);
+            }
+        }
+        )
+    }
+    else if(filter=="city"){
+        Employees.find({city:search},(err,employees)=>{
+            if(err){
+                res.json(null);
+            }else{
+                console.log(employees);
+                res.json(employees);
+            }
+        })
+    }
+    else if(filter=="state"){
+        Employees.find({state:search},(err,employees)=>{
+            if(err){
+                res.json(null);
+            }else{
+                console.log(employees);
+                res.json(employees);
+            }
+        }
+        )
+
+    }
+    else if(filter=="pincode"){
+        Employees.find({pincode:search},(err,employees)=>{
+            if(err){
+                res.json(null);
+            }else{
+                console.log(employees);
+                res.json(employees);
+            }
+        }
+        )
+    }
+
+
+
+    })
+
+
+
+
+
+
+
+// filter orders by service type, customer name,customer email, customer phone  , employee name,employee email, employee phone, state,pincode
+app.get("/filterordersforadmin", (req,res)=>{
+    let filter = req.query.filter;
+    let search = req.query.search;
+
+    console.log("Filter",filter);
+    console.log("Search",search);
+
+    if(search == ""){
+        Orders.find({},(err,orders)=>{
+            if(err){
+                res.json(null);
+            }else{
+                console.log(orders);
+                res.json(orders);
+            }
+        }
+        )
+    }
+    else if(filter == "itype"){
+        Orders.find({itype:search},(err,orders)=>{
+            if(err){
+                res.json(null);
+            }else{
+                console.log(orders);
+                res.json(orders);
+            }
+        }
+        )
+    }
+    else if(filter == "ufname"){
+        Orders.find({ufname:search},(err,orders)=>{
+            if(err){
+                res.json(null);
+            }else{
+                console.log(orders);
+                res.json(orders);
+            }
+        }
+        )
+    }
+    else if(filter == "uemail"){
+        Orders.find({uemail:search},(err,orders)=>{
+            if(err){
+                res.json(null);
+            }else{
+                console.log(orders);
+                res.json(orders);
+            }
+        }
+        )
+    }
+    else if(filter == "uphone"){
+        Orders.find({uphone:search},(err,orders)=>{
+            if(err){
+                res.json(null);
+            }else{
+                console.log(orders);
+                res.json(orders);
+            }
+        }
+        )
+    }
+    else if(filter == "efname"){
+        Orders.find({efname:search},(err,orders)=>{
+            if(err){
+                res.json(null);
+            }else{
+                console.log(orders);
+                res.json(orders);
+            }
+        }
+        )
+    }
+    else if(filter == "eemail"){
+        Orders.find({eemail:search},(err,orders)=>{
+            if(err){
+                res.json(null);
+            }else{
+                console.log(orders);
+                res.json(orders);
+            }
+        })
+    }
+    else if(filter == "ephone"){
+        Orders.find({ephone:search},(err,orders)=>{
+            if(err){
+                res.json(null);
+            }else{
+                console.log(orders);
+                res.json(orders);
+            }
+        }
+        )
+    }
+    else if(filter == "ord_state"){
+        Orders.find({ord_state:search},(err,orders)=>{
+            if(err){
+                res.json(null);
+            }else{
+                console.log(orders);
+                res.json(orders);
+            }
+        }
+        )
+    }
+    else if(filter == "ord_pincode"){
+        Orders.find({ord_pincode:search},(err,orders)=>{
+            if(err){
+                res.json(null);
+            }else{
+                console.log(orders);
+                res.json(orders);
+            }
+        }
+        )
+    }
+
+
+
+})
+
+
+
+// filter messages by cname and cemail
+app.get("/filtermessagesforadmin", (req,res)=>{
+
+    let filter = req.query.filter;
+    let search = req.query.search;
+
+    console.log("Filter",filter);
+    console.log("Search",search);
+
+    if(search == ""){
+        Messages.find({},(err,messages)=>{
+            if(err){
+                res.json(null);
+            }else{
+                console.log(messages);
+                res.json(messages);
+            }
+        }
+        )
+    }
+    else if(filter == "name"){
+        Messages.find({name:search},(err,messages)=>{
+            if(err){
+                res.json(null);
+            }else{
+                console.log(messages);
+                res.json(messages);
+            }
+        }
+        )
+    }
+    else if(filter == "email"){
+        Messages.find({ email:search},(err,messages)=>{
+            if(err){
+                res.json(null);
+            }else{
+                console.log(messages);
+                res.json(messages);
+            }
+        }
+
+        )
+    }
+})
+
+
+
+// Delete User
+app.delete("/deleteuser/:id", (req, res) => {
+    let id = req.params.id;
+    console.log("id", id);
+    Users.findByIdAndDelete(id, (err, user) => {
+        if (err) {
+            res.json(null);
+        } else{
+            console.log("user", user);
+            res.json(user);
+        }
+    });
+});
+
+
+// Delete Employee
+app.delete("/deleteemployee/:id", (req, res) => {
+    let id = req.params.id;
+    console.log("id", id);
+    Employees.findByIdAndDelete(id, (err, employee) => {
+        if (err) {
+            res.json(null);
+        } else{
+            console.log("employee", employee);
+            res.json(employee);
+        }
+    });
+});
+
+// Delete Order
+app.delete("/deleteorder/:id", (req, res) => {
+    let id = req.params.id;
+    console.log("id", id);
+    Orders.findByIdAndDelete(id, (err, order) => {
+        if (err) {
+            res.json(null);
+        } else{
+            console.log("order", order);
+            res.json(order);
+        }
+    });
+});
+
+// Delete Message
+app.delete("/deletemessage/:id", (req, res) => {
+    let id = req.params.id;
+    console.log("id", id);
+    Messages.findByIdAndDelete(id, (err, message) => {
+        if (err) {
+            res.json(null);
+        } else{
+            console.log("message", message);
+            res.json(message);
+        }
+    });
+});
+
+
+
+
+
 const port = process.env.PORT || 3001;
 
 app.listen(port, () => {
