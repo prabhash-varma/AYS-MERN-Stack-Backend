@@ -19,7 +19,7 @@ app.get('/', function(req, res) {
 })
 
 
-// Login
+// Login for user
 app.get("/login",(req,res)=>{
     var email = req.query.email;
     var password = req.query.password;
@@ -156,7 +156,7 @@ app.put("/updateorder/:id",(req,res)=>{
 app.get("/ordersbyuser",(req,res)=>{
     var uemail = req.query.uemail;
     Orders.find
-    ({email:uemail},(err,orders)=>{
+    ({uemail:uemail},(err,orders)=>{
         if(err){
             res.json(null);
         }else{
@@ -262,7 +262,7 @@ app.post("/orders",(req,res)=>{
 // get orders for employeee (work page)
 app.get("/getorders",(req,res)=>{
     let eemail = req.query.eemail;
-    Orders.find({email:eemail},(err,orders)=>{
+    Orders.find({eemail:eemail},(err,orders)=>{
         if(err){
             res.json(null);
         }else{
