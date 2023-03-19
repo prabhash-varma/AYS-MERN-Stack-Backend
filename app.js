@@ -9,6 +9,7 @@ var Orders = require('./models/Order');
 app.use(express.json());
 var cors = require('cors');
 app.use(cors());
+var multer = require('multer');
 
 require("dotenv").config();
 
