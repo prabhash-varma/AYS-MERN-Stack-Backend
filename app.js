@@ -10,6 +10,10 @@ app.use(express.json());
 var cors = require('cors');
 app.use(cors());
 var multer = require('multer');
+const bcrypt = require('bcryptjs');
+
+// import compare
+const compare = require('bcryptjs').compare;
 
 require("dotenv").config();
 
@@ -24,14 +28,28 @@ app.get('/', function(req, res) {
 app.get("/login",(req,res)=>{
     var email = req.query.email;
     var password = req.query.password;
+
+
     Users.find
-    ({email:email,password:password},(err,users)=>{
-        if(err){
-            res.json(null);
-        }else{
-            console.log(users);
-            res.json(users);
-        }
+    ({email:email},(err,users)=>{
+
+        // compare password
+        bcrypt.compare(password, users[0].password, function(err, result) {
+            if(result){
+                res.json(users);
+            }else{
+                res.json(null);
+            }
+        });
+
+
+
+        // if(err){
+        //     res.json(null);
+        // }else{
+        //     console.log(users);
+        //     res.json(users);
+        // }
     })
 }
 )
