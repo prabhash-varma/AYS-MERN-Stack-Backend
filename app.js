@@ -62,6 +62,8 @@ app.get("/login",(req,res)=>{
 
     Users.find
     ({email:email},(err,users)=>{
+
+        if(users.length > 0){
         // compare password
         bcrypt.compare(password, users[0].password, function(err, result) {
             if(result){
@@ -84,6 +86,9 @@ app.get("/login",(req,res)=>{
         //     console.log(users);
         //     res.json(users);
         // }
+    }else{
+        res.json({auth:false,token:null,users:null});
+    }
     })
 }
 )
