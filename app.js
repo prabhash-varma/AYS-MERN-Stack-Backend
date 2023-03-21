@@ -10,6 +10,8 @@ app.use(express.json());
 var cors = require('cors');
 app.use(cors());
 var multer = require('multer');
+const bodyparser = require('body-parser');
+app.use(bodyparser.json());
 const bcrypt = require('bcryptjs');
 
 const jwt = require('jsonwebtoken');
@@ -411,6 +413,22 @@ Orders.updateOne(
 
 
 // For Admin Page
+app.get("/adminlogin",(req,res)=>{
+    let email = req.query.adminemail;
+    let password = req.query.adminpassword;
+
+    console.log(req.body);
+
+    if(email === "varma@gmail.com" && password === "varma"){
+        console.log("Admin logged in");
+        res.json({auth:true});
+    }else{
+        res.json({auth:false});
+    }
+    
+})
+
+
 app.get("/getordersforadmin",(req,res)=>{
     Orders.find({},(err,orders)=>{
         if(err){
