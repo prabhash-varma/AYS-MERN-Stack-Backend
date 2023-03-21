@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const bcrypt = require('bcryptjs');
 
 const EmployeeSchema = new Schema({
     firstName: {
@@ -49,6 +50,22 @@ const EmployeeSchema = new Schema({
     free:{
         type:Number,
         required:true
+    }
+});
+
+
+
+EmployeeSchema.pre('save', async function(next) {
+    try{
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(this.password,salt);
+        this.password = hashedPassword;
+        console.log("hashed password is :",hashedPassword);
+        next();
+
+    }
+    catch(err){
+        console.log(err);
     }
 });
 

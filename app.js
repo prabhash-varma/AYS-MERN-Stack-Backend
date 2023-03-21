@@ -12,6 +12,10 @@ app.use(cors());
 var multer = require('multer');
 const bcrypt = require('bcryptjs');
 
+const jwt = require('jsonwebtoken');
+
+
+
 // import compare
 const compare = require('bcryptjs').compare;
 
@@ -24,21 +28,51 @@ app.get('/', function(req, res) {
 })
 
 
+
+// Middleware
+const verifyJWT = (req,res,next)=>{
+    const token = req.headers["x-access-token"];
+    console.log("verifyJWT_FRontend:",token);
+
+    if(!token){
+        res.json({auth:false,message:"You failed to authenticate"});
+    }else{
+        jwt.verify(token,"jwtSecret",(err,decoded)=>{
+            console.log(decoded);
+            if(err){
+                
+                res.json({auth:false,message:"You failed to authenticate1"});
+            }else{
+                req.userId = decoded.id;
+                next();
+            }
+        })
+    }
+}
+
+
+
+
+
+
 // Login for user
 app.get("/login",(req,res)=>{
-    var email = req.query.email;
-    var password = req.query.password;
-
+    let email = req.query.email;
+    let password = req.query.password;
 
     Users.find
     ({email:email},(err,users)=>{
-
         // compare password
         bcrypt.compare(password, users[0].password, function(err, result) {
             if(result){
-                res.json(users);
+                // create token
+                let token = jwt.sign({email:users[0].email},"jwtSecret",{
+                    expiresIn:"1h"});
+
+                console.log("User token:",token);
+                res.json({auth:true,token:token,users:users});
             }else{
-                res.json(null);
+                res.json({auth:false,token:null,users:null});
             }
         });
 
@@ -57,7 +91,7 @@ app.get("/login",(req,res)=>{
 
 // check email exists or not
 app.get("/checkemail",(req,res)=>{
-    var email = req.query.email;
+    let email = req.query.email;
    
     Users.find
     ({email:email},(err,users)=>{
@@ -71,9 +105,12 @@ app.get("/checkemail",(req,res)=>{
 })
 
 
+
+
 //User Signup
 app.post("/signup",(req,res)=>{
     var user = new Users(req.body);
+
     user.save((err,user)=>{
         if(err){
             res.json(null);
@@ -86,15 +123,14 @@ app.post("/signup",(req,res)=>{
 
 
 
-
 // Conatct Us messages
-app.post("/messages",(req,res)=>{
+app.post("/messages",verifyJWT,(req,res)=>{
     var message = new Messages(req.body);
     message.save((err,message)=>{
         if(err){
-            res.json(null);
+            res.json({auth:false,message:"You failed to authenticate"});
         }else{
-            res.json(message);
+            res.json({auth:true,message:message});
         }
     })
 })
@@ -103,48 +139,77 @@ app.post("/messages",(req,res)=>{
 
 // Employee login
 app.get("/emplogin",(req,res)=>{
-    var email = req.query.email;
-    var password = req.query.password;
+    let email = req.query.email;
+    let password = req.query.password;
+
     Employees.find
-    ({email:email,password:password},(err,employees)=>{
+    ({email:email},(err,employees)=>{
         if(err){
-            res.json(null);
+            res.json({auth:false,token:null,employees:null});
         }else{
-            console.log(employees);
-            res.json(employees);
+            // compare password
+            bcrypt.compare(password, employees[0].password, function(err, result) {
+                if(result){
+                    // create token
+                    let token = jwt.sign({email:employees[0].email},"jwtSecret",{
+                        expiresIn:"1h"});
+    
+                    console.log("Token employee: ",token);
+                    res.json({auth:true,token:token,employees:employees});
+                }else{
+                    res.json({auth:false,token:null,employees:null});
+                }
+            });
+
+            // console.log(employees);
+            // res.json(employees);
         }
-    }
-    )
-}
-)
+    })})
 
 
+    
 
 
 // Employee Signup
 app.post("/empsignup",(req,res)=>{
-    var employee = new Employees(req.body);
-    employee.save((err,employee)=>{
+    let employee1 = new Employees(req.body);
+    console.log(employee1);
+
+    // check email exists or not
+    Employees.find
+    ({email:employee1.email},(err,employees)=>{
         if(err){
             res.json(null);
         }else{
-            res.json(employee);
+            // if email exists
+            if(employees.length>0){
+                res.json(null);
+            }else{
+                employee1.save((err,employee)=>{
+                    if(err){
+                        res.json(null);
+                    }else{
+                        res.json(employee);
+                    }
+                })
+             }
         }
-    })
+    }) 
 })  
 
 
 
-// get order details in employee
-app.get("/ordersbyemp",(req,res)=>{
-    var eeamil = req.query.eemail;
+
+// get order details in employee (employeeee.js file)
+app.get("/ordersbyemp",verifyJWT,(req,res)=>{
+    let eemail = req.query.eemail;
     Orders.find
     ({email:eemail},(err,orders)=>{
         if(err){
-            res.json(null);
+            res.json({auth:false,orders:null});
         }else{
             console.log(orders);
-            res.json(orders);
+            res.json({auth:true,orders:orders});
         }
     }
     )
@@ -152,16 +217,16 @@ app.get("/ordersbyemp",(req,res)=>{
 
 
 
-// Update order details and status
-app.put("/updateorder/:id",(req,res)=>{
+// Update order details and status (****Not Used****)
+app.put("/updateorder/:id",verifyJWT,(req,res)=>{
     var orderid = req.params.id;
     Orders.update
     ({_id:orderid},{$set:{status:order.status}},(err,orders)=>{
         if(err){
-            res.json(null);
+            res.json({auth:false,orders:null});
         }else{
             console.log(orders);
-            res.json(orders);
+            res.json({auth:true,orders:orders});
         }
     }
     ) 
@@ -172,15 +237,15 @@ app.put("/updateorder/:id",(req,res)=>{
 
 
 //get Orders by user
-app.get("/ordersbyuser",(req,res)=>{
+app.get("/ordersbyuser",verifyJWT,(req,res)=>{
     var uemail = req.query.uemail;
     Orders.find
     ({uemail:uemail},(err,orders)=>{
         if(err){
-            res.json(null);
+            res.json({auth:false,orders:null});
         }else{
             console.log(orders);
-            res.json(orders);
+            res.json({auth:true,orders:orders});
         }
     }
     )
@@ -192,14 +257,19 @@ app.get("/ordersbyuser",(req,res)=>{
 
 
 // Update user detailss
-app.post('/updateuser',async (req,res)=>{
+app.post('/updateuser',verifyJWT,async (req,res)=>{
     let query = {'email': req.body.email};
 
 Users.findOneAndUpdate(query, req.body, {upsert: true}, function(err, doc) {
-    if (err) return res.send(500, {error: err});
-
-    console.log(doc);
-    return res.json(doc);
+    if (err){
+        console.log("Error in updating user details");
+        res.json({auth:false,doc:null});
+    } 
+    else{
+        console.log("User details updated successfully");
+        res.json({auth:true,doc:doc});
+    }
+    
 });
 }
 )
@@ -207,18 +277,19 @@ Users.findOneAndUpdate(query, req.body, {upsert: true}, function(err, doc) {
 
 
 
+
 // find employee
-app.get("/findemployee",(req,res)=>{
+app.get("/findemployee",verifyJWT,(req,res)=>{
 
     let profession = req.query.profession;
     let free = req.query.free;
     Employees.find
     ({profession:profession,free:free},(err,employees)=>{
         if(err){
-            res.json(null);
+            res.json({auth:false,employees:null});
         }else{
             console.log(employees);
-            res.json(employees);
+            res.json({auth:true,employees:employees});
         }
     }
     )
@@ -228,20 +299,23 @@ app.get("/findemployee",(req,res)=>{
 
 
 // update employee
-app.post('/updateemployee',async (req,res)=>{
+app.post('/updateemployee',verifyJWT,async (req,res)=>{
 
     console.log("Update employee",req.body)
 
     let query = {'email': req.body.email};
 
-
-
 Employees.findOneAndUpdate(query
 , req.body, {upsert: false}, function(err, doc) {
-    if (err) return res.send(500, {error: err});
+    if (err){
+        console.log("Error in updating employee details");
+        res.json({auth:false,doc:null});
+    }
+    else{
+        console.log("Employee details updated successfully");
+        res.json({auth:true,doc:doc});
+    }
 
-    console.log(doc);
-    return res.json(doc);
 });
 }
 )
@@ -249,44 +323,48 @@ Employees.findOneAndUpdate(query
 
 
 // update employee by email
-app.post('/updateemployeebyemail',async (req,res)=>{
+app.post('/updateemployeebyemail',verifyJWT,async (req,res)=>{
 
     let query = {'email': req.body.email};
     
-   
 Employees.findOneAndUpdate(query,{free:req.body.free}, {upsert: false}, function(err, doc) {
-    if (err) return res.send(500, {error: err});
+    if (err){
+        console.log("Error in updating employee details");
+        res.json({auth:false,doc:null});
+    }
+    else{
+        console.log("Employee details updated successfully");
+        res.json({auth:true,doc:doc});
+    }
 
-    console.log(doc);
-    return res.json(doc);
-});
+  });
 }
 )
 
 
 
 // post orders
-app.post("/orders",(req,res)=>{
+app.post("/orders",verifyJWT,(req,res)=>{
     var order = new Orders(req.body);
     order.save((err,order)=>{
         if(err){
-            res.json(null);
+            res.json({auth:false,order:null});
         }else{
-            res.json(order);
+            res.json({auth:true,order:order});
         }
     })
 })
 
 
 // get orders for employeee (work page)
-app.get("/getorders",(req,res)=>{
+app.get("/getorders",verifyJWT,(req,res)=>{
     let eemail = req.query.eemail;
     Orders.find({eemail:eemail},(err,orders)=>{
         if(err){
-            res.json(null);
+            res.json({auth:false,orders:null});
         }else{
             console.log(orders);
-            res.json(orders);
+            res.json({auth:true,orders:orders});
         }
     }
     )
@@ -295,7 +373,7 @@ app.get("/getorders",(req,res)=>{
 
 
 // update orders
-app.post('/updateorder',async (req,res)=>{
+app.post('/updateorder',verifyJWT,async (req,res)=>{
     let cost = req.body.cost;
     let orderid = req.body.orderid;
     let query = {'_id': orderid};
@@ -305,13 +383,16 @@ app.post('/updateorder',async (req,res)=>{
     console.log("Update order",req.body)
 
 Orders.findOneAndUpdate(query, {status:status}, {upsert: false}, function(err, doc) {
-    if (err) return res.send(500, {error: err});
+    if (err){
+        console.log("Error in updating order details");
+        res.json({auth:false,doc:null});
+    }
+    else{
+        console.log("Order details updated successfully");
+        res.json({auth:true,doc:doc});
+    }
 
-    console.log(doc);
-    return res.json(doc);
 });
-
-
 
 Orders.updateOne(
     {_id: orderid}, 
@@ -319,10 +400,7 @@ Orders.updateOne(
     {multi:true}, 
       function(err, numberAffected){  
       });
-
-
-}
-)
+})
 
 
 
@@ -480,13 +558,6 @@ app.get("/filtercustomersforadmin", (req,res)=>{
         }
         )
     }
-
-
-
-
-   
-
-
 })
 
 
@@ -613,9 +684,6 @@ app.get("/filteremployeesforadmin", (req,res)=>{
         }
         )
     }
-
-
-
     })
 
 
@@ -741,9 +809,6 @@ app.get("/filterordersforadmin", (req,res)=>{
         }
         )
     }
-
-
-
 })
 
 
@@ -824,6 +889,9 @@ app.delete("/deleteemployee/:id", (req, res) => {
     });
 });
 
+
+
+
 // Delete Order
 app.delete("/deleteorder/:id", (req, res) => {
     let id = req.params.id;
@@ -838,6 +906,8 @@ app.delete("/deleteorder/:id", (req, res) => {
     });
 });
 
+
+
 // Delete Message
 app.delete("/deletemessage/:id", (req, res) => {
     let id = req.params.id;
@@ -851,8 +921,6 @@ app.delete("/deletemessage/:id", (req, res) => {
         }
     });
 });
-
-
 
 
 
