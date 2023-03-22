@@ -421,21 +421,27 @@ app.get("/adminlogin",(req,res)=>{
 
     if(email === "varma@gmail.com" && password === "varma"){
         console.log("Admin logged in");
-        res.json({auth:true});
+
+        // create a token
+        let token = jwt.sign({email:email},"jwtSecret",{expiresIn:"1h"});
+
+        console.log("Admin token:",token);
+        res.json({auth:true,token:token});
+
     }else{
-        res.json({auth:false});
+        res.json({auth:false,token:null});
     }
     
 })
 
 
-app.get("/getordersforadmin",(req,res)=>{
+app.get("/getordersforadmin",verifyJWT,(req,res)=>{
     Orders.find({},(err,orders)=>{
         if(err){
-            res.json(null);
+            res.json({auth:false,orders:null});
         }else{
             console.log(orders);
-            res.json(orders);
+            res.json({auth:true,orders:orders});
         }
     }
     )
@@ -444,13 +450,13 @@ app.get("/getordersforadmin",(req,res)=>{
 
 
 // get all employees
-app.get("/getemployeesforadmin",(req,res)=>{
+app.get("/getemployeesforadmin",verifyJWT,(req,res)=>{
     Employees.find({},(err,employees)=>{
         if(err){
-            res.json(null);
+            res.json({auth:false,employees:null});
         }else{
             console.log(employees);
-            res.json(employees);
+            res.json({auth:true,employees:employees});
         }
     }
     )
@@ -459,13 +465,13 @@ app.get("/getemployeesforadmin",(req,res)=>{
 
 
 // get all users
-app.get("/getusersforadmin",(req,res)=>{
+app.get("/getusersforadmin",verifyJWT,(req,res)=>{
     Users.find({},(err,users)=>{
         if(err){
-            res.json(null);
+            res.json({auth:false,users:null});
         }else{
             console.log(users);
-            res.json(users);
+            res.json({auth:true,users:users});
         }
     }
     )
@@ -473,13 +479,13 @@ app.get("/getusersforadmin",(req,res)=>{
 )
 
 // get messages for admin
-app.get("/getmessagesforadmin",(req,res)=>{
+app.get("/getmessagesforadmin",verifyJWT,(req,res)=>{
     Messages.find({},(err,messages)=>{
         if(err){
-            res.json(null);
+            res.json({auth:false,messages:null});
         }else{
             console.log(messages);
-            res.json(messages);
+            res.json({auth:true,messages:messages});
         }
     }
     )
@@ -491,7 +497,7 @@ app.get("/getmessagesforadmin",(req,res)=>{
 
 
 // filter customers by first name , last name , email , phone, city, state, pincode
-app.get("/filtercustomersforadmin", (req,res)=>{
+app.get("/filtercustomersforadmin",verifyJWT, (req,res)=>{
 
     let filter = req.query.filter;
     let search = req.query.search;
@@ -502,10 +508,10 @@ app.get("/filtercustomersforadmin", (req,res)=>{
     if(search == ""){
         Users.find({},(err,users)=>{
             if(err){
-                res.json(null);
+                res.json({auth:false,users:null});
             }else{
                 console.log(users);
-                res.json(users);
+                res.json({auth:true,users:users});
             }
         }
         )
@@ -513,70 +519,70 @@ app.get("/filtercustomersforadmin", (req,res)=>{
     else if(filter == "firstName"){
         Users.find({firstName:search},(err,users)=>{
             if(err){
-                res.json(null);
+                res.json({auth:false,users:null});
             }else{
                 console.log(users);
-                res.json(users);
+                res.json({auth:true,users:users});
             }
         }
         )
     }else if(filter == "lastName"){
         Users.find({lastName:search},(err,users)=>{
             if(err){
-                res.json(null);
+                res.json({auth:false,users:null});
             }else{
                 console.log(users);
-                res.json(users);
+                res.json({auth:true,users:users});
             }
         }
         )
     }else if(filter == "email"){
         Users.find({email:search},(err,users)=>{
             if(err){
-                res.json(null);
+                res.json({auth:false,users:null});
             }else{
                 console.log(users);
-                res.json(users);
+                res.json({auth:true,users:users});
             }
         }
         )
     }else if(filter == "phone"){
         Users.find({phone:search},(err,users)=>{
             if(err){
-                res.json(null);
+                res.json({auth:false,users:null});
             }else{
                 console.log(users);
-                res.json(users);
+                res.json({auth:true,users:users});
             }
         }
         )
     }else if(filter == "city"){
         Users.find({city:search},(err,users)=>{
             if(err){
-                res.json(null);
+                res.json({auth:false,users:null});
             }else{
                 console.log(users);
-                res.json(users);
+                res.json({auth:true,users:users});
             }
         }
         )
     }else if(filter == "state"){
         Users.find({state:search},(err,users)=>{
             if(err){
-                res.json(null);
+                res.json({auth:false,users:null});
             }else{
                 console.log(users);
-                res.json(users);
+                res.json({auth:true,users:users});
             }
         }
         )
     }else if(filter == "pincode"){
         Users.find({pincode:search},(err,users)=>{
             if(err){
-                res.json(null);
+                res.json({auth:false,users:null});
             }else{
                 console.log(users);
-                res.json(users);
+                res.json({auth:true,users:users});
             }
         }
         )
@@ -592,7 +598,7 @@ app.get("/filtercustomersforadmin", (req,res)=>{
 
 
 // filter employees by first name , last name , gender, profession, email , phone, city, state, pincode
-app.get("/filteremployeesforadmin", (req,res)=>{
+app.get("/filteremployeesforadmin",verifyJWT, (req,res)=>{
     let filter = req.query.filter;
     let search = req.query.search;
 
@@ -602,10 +608,10 @@ app.get("/filteremployeesforadmin", (req,res)=>{
     if(search==""){
         Employees.find({},(err,employees)=>{
             if(err){
-                res.json(null);
+                res.json({auth:false,employees:null});
             }else{
                 console.log(employees);
-                res.json(employees);
+                res.json({auth:true,employees:employees});
             }
         }
         )
@@ -613,20 +619,20 @@ app.get("/filteremployeesforadmin", (req,res)=>{
     else if(filter=="firstName"){
         Employees.find({firstName:search},(err,employees)=>{
             if(err){
-                res.json(null);
+                res.json({auth:false,employees:null});
             }else{
                 console.log(employees);
-                res.json(employees);
+                res.json({auth:true,employees:employees});
             }
         })
     }
     else if(filter=="lastName"){
         Employees.find({lastName:search},(err,employees)=>{
             if(err){
-                res.json(null);
+                res.json({auth:false,employees:null});
             }else{
                 console.log(employees);
-                res.json(employees);
+                res.json({auth:true,employees:employees});
             }
         }
         )
@@ -634,20 +640,20 @@ app.get("/filteremployeesforadmin", (req,res)=>{
     else if(filter=="gender"){
         Employees.find({gender:search},(err,employees)=>{
             if(err){
-                res.json(null);
+                res.json({auth:false,employees:null});
             }else{
                 console.log(employees);
-                res.json(employees);
+                res.json({auth:true,employees:employees});
             }
     })
     }
     else if(filter=="profession"){
         Employees.find({profession:search},(err,employees)=>{
             if(err){
-                res.json(null);
+                res.json({auth:false,employees:null});
             }else{
                 console.log(employees);
-                res.json(employees);
+                res.json({auth:true,employees:employees});
             }
         }
         )
@@ -655,10 +661,10 @@ app.get("/filteremployeesforadmin", (req,res)=>{
     else if(filter=="email"){
         Employees.find({ email:search},(err,employees)=>{
             if(err){
-                res.json(null);
+                res.json({auth:false,employees:null});
             }else{
                 console.log(employees);
-                res.json(employees);
+                res.json({auth:true,employees:employees});
             }
         }
         )
@@ -666,10 +672,10 @@ app.get("/filteremployeesforadmin", (req,res)=>{
     else if(filter=="phone"){
         Employees.find({phone:search},(err,employees)=>{
             if(err){
-                res.json(null);
+                res.json({auth:false,employees:null});
             }else{
                 console.log(employees);
-                res.json(employees);
+                res.json({auth:true,employees:employees});
             }
         }
         )
@@ -677,20 +683,20 @@ app.get("/filteremployeesforadmin", (req,res)=>{
     else if(filter=="city"){
         Employees.find({city:search},(err,employees)=>{
             if(err){
-                res.json(null);
+                res.json({auth:false,employees:null});
             }else{
                 console.log(employees);
-                res.json(employees);
+                res.json({auth:true,employees:employees});
             }
         })
     }
     else if(filter=="state"){
         Employees.find({state:search},(err,employees)=>{
             if(err){
-                res.json(null);
+                res.json({auth:false,employees:null});
             }else{
                 console.log(employees);
-                res.json(employees);
+                res.json({auth:true,employees:employees});
             }
         }
         )
@@ -699,10 +705,10 @@ app.get("/filteremployeesforadmin", (req,res)=>{
     else if(filter=="pincode"){
         Employees.find({pincode:search},(err,employees)=>{
             if(err){
-                res.json(null);
+                res.json({auth:false,employees:null});
             }else{
                 console.log(employees);
-                res.json(employees);
+                res.json({auth:true,employees:employees});
             }
         }
         )
@@ -716,7 +722,7 @@ app.get("/filteremployeesforadmin", (req,res)=>{
 
 
 // filter orders by service type, customer name,customer email, customer phone  , employee name,employee email, employee phone, state,pincode
-app.get("/filterordersforadmin", (req,res)=>{
+app.get("/filterordersforadmin",verifyJWT, (req,res)=>{
     let filter = req.query.filter;
     let search = req.query.search;
 
@@ -726,10 +732,10 @@ app.get("/filterordersforadmin", (req,res)=>{
     if(search == ""){
         Orders.find({},(err,orders)=>{
             if(err){
-                res.json(null);
+                res.json({auth:false,orders:null});
             }else{
                 console.log(orders);
-                res.json(orders);
+                res.json({auth:true,orders:orders});
             }
         }
         )
@@ -737,10 +743,10 @@ app.get("/filterordersforadmin", (req,res)=>{
     else if(filter == "itype"){
         Orders.find({itype:search},(err,orders)=>{
             if(err){
-                res.json(null);
+                res.json({auth:false,orders:null});
             }else{
                 console.log(orders);
-                res.json(orders);
+                res.json({auth:true,orders:orders});
             }
         }
         )
@@ -748,10 +754,10 @@ app.get("/filterordersforadmin", (req,res)=>{
     else if(filter == "ufname"){
         Orders.find({ufname:search},(err,orders)=>{
             if(err){
-                res.json(null);
+                res.json({auth:false,orders:null});
             }else{
                 console.log(orders);
-                res.json(orders);
+                res.json({auth:true,orders:orders});
             }
         }
         )
@@ -759,10 +765,10 @@ app.get("/filterordersforadmin", (req,res)=>{
     else if(filter == "uemail"){
         Orders.find({uemail:search},(err,orders)=>{
             if(err){
-                res.json(null);
+                res.json({auth:false,orders:null});
             }else{
                 console.log(orders);
-                res.json(orders);
+                res.json({auth:true,orders:orders});
             }
         }
         )
@@ -770,10 +776,10 @@ app.get("/filterordersforadmin", (req,res)=>{
     else if(filter == "uphone"){
         Orders.find({uphone:search},(err,orders)=>{
             if(err){
-                res.json(null);
+                res.json({auth:false,orders:null});
             }else{
                 console.log(orders);
-                res.json(orders);
+                res.json({auth:true,orders:orders});
             }
         }
         )
@@ -781,10 +787,10 @@ app.get("/filterordersforadmin", (req,res)=>{
     else if(filter == "efname"){
         Orders.find({efname:search},(err,orders)=>{
             if(err){
-                res.json(null);
+                res.json({auth:false,orders:null});
             }else{
                 console.log(orders);
-                res.json(orders);
+                res.json({auth:true,orders:orders});
             }
         }
         )
@@ -792,20 +798,20 @@ app.get("/filterordersforadmin", (req,res)=>{
     else if(filter == "eemail"){
         Orders.find({eemail:search},(err,orders)=>{
             if(err){
-                res.json(null);
+                res.json({auth:false,orders:null});
             }else{
                 console.log(orders);
-                res.json(orders);
+                res.json({auth:true,orders:orders});
             }
         })
     }
     else if(filter == "ephone"){
         Orders.find({ephone:search},(err,orders)=>{
             if(err){
-                res.json(null);
+                res.json({auth:false,orders:null});
             }else{
                 console.log(orders);
-                res.json(orders);
+                res.json({auth:true,orders:orders});
             }
         }
         )
@@ -813,10 +819,10 @@ app.get("/filterordersforadmin", (req,res)=>{
     else if(filter == "ord_state"){
         Orders.find({ord_state:search},(err,orders)=>{
             if(err){
-                res.json(null);
+                res.json({auth:false,orders:null});
             }else{
                 console.log(orders);
-                res.json(orders);
+                res.json({auth:true,orders:orders});
             }
         }
         )
@@ -824,10 +830,10 @@ app.get("/filterordersforadmin", (req,res)=>{
     else if(filter == "ord_pincode"){
         Orders.find({ord_pincode:search},(err,orders)=>{
             if(err){
-                res.json(null);
+                res.json({auth:false,orders:null});
             }else{
                 console.log(orders);
-                res.json(orders);
+                res.json({auth:true,orders:orders});
             }
         }
         )
@@ -836,8 +842,11 @@ app.get("/filterordersforadmin", (req,res)=>{
 
 
 
+
+
+
 // filter messages by cname and cemail
-app.get("/filtermessagesforadmin", (req,res)=>{
+app.get("/filtermessagesforadmin",verifyJWT, (req,res)=>{
 
     let filter = req.query.filter;
     let search = req.query.search;
@@ -848,10 +857,10 @@ app.get("/filtermessagesforadmin", (req,res)=>{
     if(search == ""){
         Messages.find({},(err,messages)=>{
             if(err){
-                res.json(null);
+                res.json({auth:false,messages:null});
             }else{
                 console.log(messages);
-                res.json(messages);
+                res.json({auth:true,messages:messages});
             }
         }
         )
@@ -859,10 +868,10 @@ app.get("/filtermessagesforadmin", (req,res)=>{
     else if(filter == "name"){
         Messages.find({name:search},(err,messages)=>{
             if(err){
-                res.json(null);
+                res.json({auth:false,messages:null});
             }else{
                 console.log(messages);
-                res.json(messages);
+                res.json({auth:true,messages:messages});
             }
         }
         )
@@ -870,44 +879,45 @@ app.get("/filtermessagesforadmin", (req,res)=>{
     else if(filter == "email"){
         Messages.find({ email:search},(err,messages)=>{
             if(err){
-                res.json(null);
+                res.json({auth:false,messages:null});
             }else{
                 console.log(messages);
-                res.json(messages);
+                res.json({auth:true,messages:messages});
             }
         }
-
         )
     }
 })
 
 
 
+
+
 // Delete User
-app.delete("/deleteuser/:id", (req, res) => {
+app.delete("/deleteuser/:id",verifyJWT, (req, res) => {
     let id = req.params.id;
     console.log("id", id);
     Users.findByIdAndDelete(id, (err, user) => {
         if (err) {
-            res.json(null);
+            res.json({auth:false,user:null});
         } else{
             console.log("user", user);
-            res.json(user);
+            res.json({auth:true,user:user});
         }
     });
 });
 
 
 // Delete Employee
-app.delete("/deleteemployee/:id", (req, res) => {
+app.delete("/deleteemployee/:id",verifyJWT, (req, res) => {
     let id = req.params.id;
     console.log("id", id);
     Employees.findByIdAndDelete(id, (err, employee) => {
         if (err) {
-            res.json(null);
+            res.json({auth:false,employee:null});
         } else{
             console.log("employee", employee);
-            res.json(employee);
+            res.json({auth:true,employee:employee});
         }
     });
 });
@@ -916,15 +926,15 @@ app.delete("/deleteemployee/:id", (req, res) => {
 
 
 // Delete Order
-app.delete("/deleteorder/:id", (req, res) => {
+app.delete("/deleteorder/:id",verifyJWT, (req, res) => {
     let id = req.params.id;
     console.log("id", id);
     Orders.findByIdAndDelete(id, (err, order) => {
         if (err) {
-            res.json(null);
+            res.json({auth:false,order:null});
         } else{
             console.log("order", order);
-            res.json(order);
+            res.json({auth:true,order:order});
         }
     });
 });
@@ -932,15 +942,15 @@ app.delete("/deleteorder/:id", (req, res) => {
 
 
 // Delete Message
-app.delete("/deletemessage/:id", (req, res) => {
+app.delete("/deletemessage/:id", verifyJWT,(req, res) => {
     let id = req.params.id;
     console.log("id", id);
     Messages.findByIdAndDelete(id, (err, message) => {
         if (err) {
-            res.json(null);
+            res.json({auth:false,message:null});
         } else{
             console.log("message", message);
-            res.json(message);
+            res.json({auth:true,message:message});
         }
     });
 });
