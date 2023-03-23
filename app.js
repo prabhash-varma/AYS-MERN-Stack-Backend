@@ -289,9 +289,10 @@ Users.findOneAndUpdate(query, req.body, {upsert: true}, function(err, doc) {
 app.get("/findemployee",verifyJWT,(req,res)=>{
 
     let profession = req.query.profession;
+    let pincode = req.query.pincode;
     let free = req.query.free;
     Employees.find
-    ({profession:profession,free:free},(err,employees)=>{
+    ({profession:profession,pincode:pincode,free:free},(err,employees)=>{
         if(err){
             res.json({auth:false,employees:null});
         }else{
