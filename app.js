@@ -456,12 +456,20 @@ app.get("/emplogin", (req, res) => {
   let email = req.query.email;
   let password = req.query.password;
 
+
+
+
   Employees.find({ email: email }, (err, employees) => {
     if (err) {
       res.json({ auth: false, token: null, employees: null });
-    } else {
+    }
+    else if(employees.length == 0) {
+      res.json({ auth: false, token: null, employees: null });
+    }
+    else {
       // compare password
       bcrypt.compare(password, employees[0].password, function (err, result) {
+     
         if (result) {
           // create token
           let token = jwt.sign({ email: employees[0].email }, "jwtSecret", {
@@ -594,7 +602,7 @@ app.put("/updateorder/:id", verifyJWT, (req, res) => {
  */
 
 app.get("/ordersbyuser", verifyJWT, (req, res) => {
-  var uemail = req.query.uemail;
+  let uemail = req.query.uemail;
   Orders.find({ uemail: uemail }, (err, orders) => {
     if (err) {
       res.json({ auth: false, orders: null });
