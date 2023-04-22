@@ -92,14 +92,14 @@ app.get("/", function (req, res) {
 
 // Middleware
 const verifyJWT = (req, res, next) => {
-  // const token = req.headers["x-access-token"].split(' ')[1];
+  let token = req.headers["authorization"].split(" ")[1];
   // const token = req.headers["x-access-token"];
-  let token = req.headers["authorization"];
-  if(token!=null){
-    if(token.includes("bearer")){
-   token = req.headers["authorization"].split(" ")[1];
-    }
-  }
+  //let token = req.headers["authorization"];
+  // if(token!=null || token!=undefined){
+  //   if(token.includes("Bearer") || token.includes("bearer")){
+  //  token = req.headers["authorization"].split(" ")[1];
+  //   }
+  // }
   console.log("verifyJWT_FRontend:", token);
 
   if (!token) {
@@ -269,6 +269,8 @@ const verifyJWT = (req, res, next) => {
 app.get("/login", (req, res) => {
   let email = req.query.email;
   let password = req.query.password;
+
+  
 
   Users.find({ email: email }, (err, users) => {
     if (users.length > 0) {
@@ -1740,6 +1742,18 @@ app.delete("/deletemessage/:id", verifyJWT, (req, res) => {
   });
 });
 
+
+
+app.get('/getcountforadmin',async (req,res)=>{
+    // count no of salon orders and other type of orders
+    let q = req.query.type;
+    let count;
+   
+    count = await Orders.countDocuments({itype:q});
+
+    res.json({count:count});
+    
+})
 
 
 

@@ -1,0 +1,3 @@
+::ffff:127.0.0.1 - - [03/Apr/2023:17:05:54 +0000] "POST /empsignup HTTP/1.1" 200 342 "http://localhost:3000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/111.0"
+::ffff:127.0.0.1 - - [03/Apr/2023:17:13:59 +0000] "POST /empsignup HTTP/1.1" 200 349 "http://localhost:3000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/111.0"
+::ffff:127.0.0.1 - - [03/Apr/2023:17:14:41 +0000] "GET /emplogin?email=reddyvamsi386@gmail.com&password=Vamsi@123 HTTP/1.1" 200 554 "http://localhost:3000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/111.0"
