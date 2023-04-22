@@ -68,7 +68,7 @@ const options = {
     ],
     servers: [
       {
-        url: "http://localhost:3001",
+        url: process.env.URL,
       },
     ],
   },
@@ -79,12 +79,20 @@ const swaggerSpec = swaggerJsDoc(options);
 // swagger docs
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-require("dotenv").config();
 
 mongoose.connect(
-  "mongodb+srv://prabhash:prabhash@cluster0.cucjq6t.mongodb.net/?retryWrites=true&w=majority",
+  process.env.MONGO_URI,
   { useNewUrlParser: true, useUnifiedTopology: true }
-);
+)
+  .then(() => {
+    const port = process.env.PORT || 3001;
+    app.listen(port, () => {
+      console.log("App listening on port 3001");
+    });
+  })
+  .catch((err) => {
+    console.log(err);
+  })
 
 app.get("/", function (req, res) {
   res.send("hello world");
@@ -105,7 +113,7 @@ const verifyJWT = (req, res, next) => {
   if (!token) {
     res.json({ auth: false, message: "You failed to authenticate" });
   } else {
-    jwt.verify(token, "jwtSecret", (err, decoded) => {
+    jwt.verify(token, process.env.JWT_KEY, (err, decoded) => {
       console.log(decoded);
       if (err) {
         res.json({ auth: false, message: "You failed to authenticate1" });
@@ -270,7 +278,7 @@ app.get("/login", (req, res) => {
   let email = req.query.email;
   let password = req.query.password;
 
-  
+
 
   Users.find({ email: email }, (err, users) => {
     if (users.length > 0) {
@@ -278,7 +286,7 @@ app.get("/login", (req, res) => {
       bcrypt.compare(password, users[0].password, function (err, result) {
         if (result) {
           // create token
-          let token = jwt.sign({ email: users[0].email }, "jwtSecret", {
+          let token = jwt.sign({ email: users[0].email }, process.env.JWT_KEY, {
             expiresIn: "1h",
           });
 
@@ -465,13 +473,13 @@ app.get("/emplogin", (req, res) => {
     if (err) {
       res.json({ auth: false, token: null, employees: null });
     }
-    else if(employees.length == 0) {
+    else if (employees.length == 0) {
       res.json({ auth: false, token: null, employees: null });
     }
     else {
       // compare password
       bcrypt.compare(password, employees[0].password, function (err, result) {
-     
+
         if (result) {
           // create token
           let token = jwt.sign({ email: employees[0].email }, "jwtSecret", {
@@ -954,7 +962,7 @@ app.post("/updateorder", verifyJWT, async (req, res) => {
     { _id: orderid },
     { cost: cost },
     { multi: true },
-    function (err, numberAffected) {}
+    function (err, numberAffected) { }
   );
 });
 
@@ -1744,49 +1752,45 @@ app.delete("/deletemessage/:id", verifyJWT, (req, res) => {
 
 
 
-app.get('/getcountforadmin',async (req,res)=>{
-    // count no of salon orders and other type of orders
-    let q = req.query.type;
-    let count;
-   
-    count = await Orders.countDocuments({itype:q});
+app.get('/getcountforadmin', async (req, res) => {
+  // count no of salon orders and other type of orders
+  let q = req.query.type;
+  let count;
 
-    res.json({count:count});
-    
+  count = await Orders.countDocuments({ itype: q });
+
+  res.json({ count: count });
+
 })
 
 
 
-app.post("/uploadimg", upload.single("file"),verifyJWT,async (req, res) => {
+app.post("/uploadimg", upload.single("file"), verifyJWT, async (req, res) => {
   console.log("Upload image", req.body);
   console.log("Upload file", req.file);
   let url;
 
 
-  cloudinary.uploader.upload(req.file.path, {public_id:req.file.filename}).then((data) => {
-  console.log(data);
-  url = data.secure_url;
-  console.log("URL",data.secure_url);
- 
-}).catch((err) => {
-  console.log(err);
-}).then((respone)=>{
-  res.json({auth:true,secure_url: url });
+  cloudinary.uploader.upload(req.file.path, { public_id: req.file.filename }).then((data) => {
+    console.log(data);
+    url = data.secure_url;
+    console.log("URL", data.secure_url);
+
+  }).catch((err) => {
+    console.log(err);
+  }).then((respone) => {
+    res.json({ auth: true, secure_url: url });
+  });
+
+
+  // Generate 
+  // let url = cloudinary.url(req.file.filename, {
+  //   width: 100,
+  //   height: 150,
+  //   Crop: 'fill'
+  // });
+
+
 });
 
 
-// Generate 
-// let url = cloudinary.url(req.file.filename, {
-//   width: 100,
-//   height: 150,
-//   Crop: 'fill'
-// });
-
- 
-});
-
-const port = process.env.PORT || 3001;
-
-app.listen(port, () => {
-  console.log("App listening on port 3001");
-});
