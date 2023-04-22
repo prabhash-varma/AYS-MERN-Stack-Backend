@@ -1765,7 +1765,7 @@ app.get('/getcountforadmin', async (req, res) => {
 
 
 
-app.post("/uploadimg", upload.single("file"), verifyJWT, async (req, res) => {
+app.post("/uploadimg", verifyJWT, async (req, res) => {
   console.log("Upload image", req.body);
   console.log("Upload file", req.file);
   let url;
