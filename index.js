@@ -8,7 +8,7 @@ var Messages = require("./models/Message");
 var Orders = require("./models/Order");
 app.use(express.json());
 var cors = require("cors");
-app.use(cors());
+app.use(cors({ origin: "https://ays-company.vercel.app/" }));
 const swaggerJsDoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const bodyparser = require("body-parser");
@@ -650,7 +650,7 @@ app.get("/ordersbyuser", verifyJWT, (req, res) => {
  *                              $ref: '#components/schemas/User'
  *
  */
-app.post("/updateuser", verifyJWT, async (req, res) => {
+app.post("/updateuser",verifyJWT, async (req, res) => {
   let query = { email: req.body.email };
 
   Users.findOneAndUpdate(
@@ -1765,7 +1765,7 @@ app.get('/getcountforadmin', async (req, res) => {
 
 
 
-app.post("/uploadimg", verifyJWT, async (req, res) => {
+app.post("/uploadimg", upload.single("file") ,verifyJWT, async (req, res) => {
   console.log("Upload image", req.body);
   console.log("Upload file", req.file);
   let url;
