@@ -1,5 +1,0 @@
-::ffff:127.0.0.1 - - [03/Apr/2023:17:16:40 +0000] "GET /emplogin?email=reddyvarun684@gmail.com&password=Varun@123 HTTP/1.1" 200 561 "http://localhost:3000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/111.0"
-::ffff:127.0.0.1 - - [03/Apr/2023:17:17:29 +0000] "GET /emplogin?email=chillarmanjeet807@gmail.com&password=Manjeet@123 HTTP/1.1" 200 587 "http://localhost:3000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/111.0"
-::ffff:127.0.0.1 - - [03/Apr/2023:17:17:35 +0000] "GET /getorders?eemail=chillarmanjeet807@gmail.com HTTP/1.1" 200 54 "http://localhost:3000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/111.0"
-::ffff:127.0.0.1 - - [03/Apr/2023:17:21:21 +0000] "POST /empsignup HTTP/1.1" 200 344 "http://localhost:3000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/111.0"
-::ffff:127.0.0.1 - - [03/Apr/2023:17:21:47 +0000] "GET /emplogin?email=reddyjayanth611@gmail.com&password=Jayanth@123 HTTP/1.1" 200 559 "http://localhost:3000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/111.0"

@@ -1,7 +1,0 @@
-::ffff:127.0.0.1 - - [26/Mar/2023:12:19:34 +0000] "GET /api-docs/ HTTP/1.1" 200 3106 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/111.0"
-::ffff:127.0.0.1 - - [26/Mar/2023:12:19:35 +0000] "GET /api-docs/swagger-ui-init.js HTTP/1.1" 200 32697 "http://localhost:3001/api-docs/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/111.0"
-::ffff:127.0.0.1 - - [26/Mar/2023:12:19:35 +0000] "GET /api-docs/swagger-ui.css HTTP/1.1" 200 145206 "http://localhost:3001/api-docs/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/111.0"
-::ffff:127.0.0.1 - - [26/Mar/2023:12:19:36 +0000] "GET /api-docs/swagger-ui-standalone-preset.js HTTP/1.1" 200 322863 "http://localhost:3001/api-docs/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/111.0"
-::ffff:127.0.0.1 - - [26/Mar/2023:12:19:36 +0000] "GET /api-docs/swagger-ui-bundle.js HTTP/1.1" 200 1046583 "http://localhost:3001/api-docs/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/111.0"
-::ffff:127.0.0.1 - - [26/Mar/2023:12:19:36 +0000] "GET /api-docs/favicon-32x32.png HTTP/1.1" - - "http://localhost:3001/api-docs/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/111.0"
-::ffff:127.0.0.1 - - [26/Mar/2023:16:48:23 +0000] "GET /login?email=bhargavkoduri123@gmail.com&password=Password@1 HTTP/1.1" 200 602 "http://localhost:3000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/111.0"

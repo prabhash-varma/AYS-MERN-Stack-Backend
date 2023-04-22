@@ -19,9 +19,9 @@ const jwt = require("jsonwebtoken");
 
 
 // Morgan - Multer - Cloudinary
-const morgan = require("morgan");
-const { logs } = require("./morgan/morgan.js");
-app.use(morgan("combined", { stream: logs }));
+// const morgan = require("morgan");
+// const { logs } = require("./morgan/morgan.js");
+// app.use(morgan("combined", { stream: logs }));
 
 require("dotenv").config();
 
