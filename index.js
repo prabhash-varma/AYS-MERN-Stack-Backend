@@ -18,6 +18,11 @@ const jwt = require("jsonwebtoken");
 const redis = require("redis");
 
 
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  next();
+});
+
 
 let redisClient;
 
