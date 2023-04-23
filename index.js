@@ -636,7 +636,6 @@ app.get("/ordersbyuser", verifyJWT, async (req, res) => {
   let uemail = req.query.uemail;
 
   let isCached = false;
-
   let results;
 
   try {
@@ -644,23 +643,29 @@ app.get("/ordersbyuser", verifyJWT, async (req, res) => {
     if (cacheResults) {
       isCached = true;
       results = JSON.parse(cacheResults);
+      console.log("from cache");
+      res.json({ auth: true, orders: results, fromCache: isCached });
     } else {
-      await Orders.find({ uemail: uemail }, (err, orders) => {
+      Orders.find({ uemail: uemail },async (err, orders) => {
         if (err) {
+          console.log("Error in fetching orders");
           res.json({ auth: false, orders: null,fromCache: isCached });
         } else {
           results = orders;
+          await redisClient.set(uemail, JSON.stringify(results));
+          res.json({ auth: true, orders: orders, fromCache: isCached });
         }
+
       });
 
+      console.log("from db");
       
-      await redisClient.set(uemail, JSON.stringify(results));
     }
 
-    res.json({ auth: true, orders: results, fromCache: isCached });
     
   } catch (error) {
-    console.log(error);
+
+    console.log("Big error",error);
     res.json({ auth: false, orders: null ,fromCache: isCached});
    
   }
@@ -678,6 +683,9 @@ app.get("/ordersbyuser", verifyJWT, async (req, res) => {
  
   
 });
+
+
+
 
 // Update user detailss
 
@@ -900,7 +908,7 @@ app.post("/updateemployeebyemail", verifyJWT, async (req, res) => {
  *                      $ref: '#components/schemas/Order'
  *      responses:
  *          200:
- *              description: Success
+ *              description: Successfull
  *              content:
  *                  application/json:
  *                      schema:
