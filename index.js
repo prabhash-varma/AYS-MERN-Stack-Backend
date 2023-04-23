@@ -18,7 +18,7 @@ const jwt = require("jsonwebtoken");
 const redis = require("redis");
 
 
-const client = redis.createClient({
+const client =redis.createClient({
     password: 'te2T4l9iVgYAEdiulyROUlBVM3XMBUP0',
     socket: {
         host: 'redis-19386.c8.us-east-1-2.ec2.cloud.redislabs.com',
@@ -641,28 +641,28 @@ app.get("/ordersbyuser", verifyJWT, async (req, res) => {
   let results;
 
   try {
-    // let cacheResults = await client.get(uemail);
-    // if (cacheResults) {
-    //   isCached = true;
-    //   results = JSON.parse(cacheResults);
-    //   console.log("from cache");
-    //   res.json({ auth: true, orders: results, fromCache: isCached });
-    // } else {
+    let cacheResults = await client.get(uemail);
+    if (cacheResults) {
+      isCached = true;
+      results = JSON.parse(cacheResults);
+      console.log("from cache");
+      res.json({ auth: true, orders: results, fromCache: isCached });
+    } else {
       Orders.find({ uemail: uemail },async (err, orders) => {
         if (err) {
           console.log("Error in fetching orders");
           res.json({ auth: false, orders: null,fromCache: isCached });
         } else {
           results = orders;
-          //await client.set(uemail, JSON.stringify(results));
+          await client.set(uemail, JSON.stringify(results));
           res.json({ auth: true, orders: orders, fromCache: isCached });
         }
 
      });
 
-    //   console.log("from db");
+       console.log("from db");
       
-    // }
+     }
 
     
   } catch (error) {
