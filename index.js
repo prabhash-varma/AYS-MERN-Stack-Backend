@@ -651,7 +651,7 @@ app.get("/ordersbyuser", verifyJWT, async (req, res) => {
           res.json({ auth: false, orders: null,fromCache: isCached });
         } else {
           results = orders;
-          await redisClient.set(uemail, JSON.stringify(results));
+          //await redisClient.set(uemail, JSON.stringify(results));
           res.json({ auth: true, orders: orders, fromCache: isCached });
         }
 
