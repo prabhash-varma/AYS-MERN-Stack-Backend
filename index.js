@@ -19,13 +19,6 @@ const redis = require("redis");
 
 
 
-app.use(function (req, res, next) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  next();
-  });
 
 
 
@@ -664,7 +657,7 @@ app.get("/ordersbyuser", verifyJWT, async (req, res) => {
           res.json({ auth: false, orders: null,fromCache: isCached });
         } else {
           results = orders;
-          await redisClient.set(uemail, JSON.stringify(results));
+          //await redisClient.set(uemail, JSON.stringify(results));
           res.json({ auth: true, orders: orders, fromCache: isCached });
         }
 
