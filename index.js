@@ -15,6 +15,19 @@ const bodyparser = require("body-parser");
 app.use(bodyparser.json());
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const redis = require("redis");
+
+
+
+let redisClient;
+
+(async () => {
+  redisClient = redis.createClient();
+
+  redisClient.on("error", (error) => console.error(`Error : ${error}`));
+
+  await redisClient.connect();
+})();
 
 
 
@@ -94,9 +107,16 @@ mongoose.connect(
     console.log(err);
   })
 
+
+
+
+
 app.get("/", function (req, res) {
   res.send("hello world");
 });
+
+
+
 
 // Middleware
 const verifyJWT = (req, res, next) => {
@@ -611,16 +631,50 @@ app.put("/updateorder/:id", verifyJWT, (req, res) => {
  *
  */
 
-app.get("/ordersbyuser", verifyJWT, (req, res) => {
+app.get("/ordersbyuser", verifyJWT, async (req, res) => {
+
   let uemail = req.query.uemail;
-  Orders.find({ uemail: uemail }, (err, orders) => {
-    if (err) {
-      res.json({ auth: false, orders: null });
+
+  let isCached = false;
+
+  let results;
+
+  try {
+    const cacheResults = await redisClient.get(uemail);
+    if (cacheResults) {
+      isCached = true;
+      results = JSON.parse(cacheResults);
     } else {
-      console.log(orders);
-      res.json({ auth: true, orders: orders });
+      await Orders.find({ uemail: uemail }, (err, orders) => {
+        if (err) {
+          res.json({ auth: false, orders: null });
+        } else {
+          results = orders;
+        }
+      });
+
+      
+      await redisClient.set(uemail, JSON.stringify(results));
     }
-  });
+
+    res.json({ auth: true, orders: results, fromCache: isCached });
+    
+  } catch (error) {
+    console.log(error);
+  }
+  
+
+
+  // Orders.find({ uemail: uemail }, (err, orders) => {
+  //   if (err) {
+  //     res.json({ auth: false, orders: null });
+  //   } else {
+  //     console.log(orders);
+  //     res.json({ auth: true, orders: orders });
+  //   }
+  // });
+ 
+  
 });
 
 // Update user detailss
@@ -907,6 +961,14 @@ app.get("/getorders", verifyJWT, (req, res) => {
   });
 });
 
+
+
+
+
+
+
+
+
 // update orders
 
 /**
@@ -1008,7 +1070,9 @@ app.get("/adminlogin", (req, res) => {
  *
  */
 
-app.get("/getordersforadmin", verifyJWT, (req, res) => {
+app.get("/getordersforadmin", verifyJWT,async (req, res) => {
+
+
   Orders.find({}, (err, orders) => {
     if (err) {
       res.json({ auth: false, orders: null });
