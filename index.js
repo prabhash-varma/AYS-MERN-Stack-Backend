@@ -18,21 +18,18 @@ const jwt = require("jsonwebtoken");
 const redis = require("redis");
 
 
+const client = redis.createClient({
+    password: 'te2T4l9iVgYAEdiulyROUlBVM3XMBUP0',
+    socket: {
+        host: 'redis-19386.c8.us-east-1-2.ec2.cloud.redislabs.com',
+        port: 19386
+    }
+});
+
+client.connect();
 
 
 
-
-
-
-// let redisClient;
-
-// (async () => {
-//   redisClient = redis.createClient();
-
-//   redisClient.on("error", (error) => console.error(`Error : ${error}`));
-
-//   await redisClient.connect();
-// })();
 
 
 
@@ -644,7 +641,7 @@ app.get("/ordersbyuser", verifyJWT, async (req, res) => {
   let results;
 
   try {
-    // const cacheResults = await redisClient.get(uemail);
+    // let cacheResults = await client.get(uemail);
     // if (cacheResults) {
     //   isCached = true;
     //   results = JSON.parse(cacheResults);
@@ -657,7 +654,7 @@ app.get("/ordersbyuser", verifyJWT, async (req, res) => {
           res.json({ auth: false, orders: null,fromCache: isCached });
         } else {
           results = orders;
-          //await redisClient.set(uemail, JSON.stringify(results));
+          //await client.set(uemail, JSON.stringify(results));
           res.json({ auth: true, orders: orders, fromCache: isCached });
         }
 
