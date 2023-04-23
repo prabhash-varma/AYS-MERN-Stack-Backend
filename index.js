@@ -8,7 +8,7 @@ var Messages = require("./models/Message");
 var Orders = require("./models/Order");
 app.use(express.json());
 var cors = require("cors");
-app.use(cors({ origin: '*' }));
+app.use(cors({ origin: 'https://ays-company.vercel.app' }));
 const swaggerJsDoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const bodyparser = require("body-parser");
