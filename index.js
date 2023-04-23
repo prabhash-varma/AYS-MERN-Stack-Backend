@@ -28,7 +28,7 @@ app.use(function (req, res, next) {
   });
 
 
-  
+
 
 
 let redisClient;
@@ -651,28 +651,28 @@ app.get("/ordersbyuser", verifyJWT, async (req, res) => {
   let results;
 
   try {
-    const cacheResults = await redisClient.get(uemail);
-    if (cacheResults) {
-      isCached = true;
-      results = JSON.parse(cacheResults);
-      console.log("from cache");
-      res.json({ auth: true, orders: results, fromCache: isCached });
-    } else {
+    // const cacheResults = await redisClient.get(uemail);
+    // if (cacheResults) {
+    //   isCached = true;
+    //   results = JSON.parse(cacheResults);
+    //   console.log("from cache");
+    //   res.json({ auth: true, orders: results, fromCache: isCached });
+    // } else {
       Orders.find({ uemail: uemail },async (err, orders) => {
         if (err) {
           console.log("Error in fetching orders");
           res.json({ auth: false, orders: null,fromCache: isCached });
         } else {
           results = orders;
-          //await redisClient.set(uemail, JSON.stringify(results));
+          await redisClient.set(uemail, JSON.stringify(results));
           res.json({ auth: true, orders: orders, fromCache: isCached });
         }
 
-      });
+     });
 
-      console.log("from db");
+    //   console.log("from db");
       
-    }
+    // }
 
     
   } catch (error) {
