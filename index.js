@@ -662,37 +662,37 @@ app.get("/ordersbyuser", verifyJWT, async (req, res) => {
   let isCached = false;
   let results;
 
-  try {
-    let cacheResults = await client.get(uemail);
-    if (cacheResults) {
-      isCached = true;
-      results = JSON.parse(cacheResults);
-      console.log("from cache");
-      res.json({ auth: true, orders: results, fromCache: isCached });
-    } else {
+  // try {
+  //   let cacheResults = await client.get(uemail);
+  //   if (cacheResults) {
+  //     isCached = true;
+  //     results = JSON.parse(cacheResults);
+  //     console.log("from cache");
+  //     res.json({ auth: true, orders: results, fromCache: isCached });
+  //   } else {
       Orders.find({ uemail: uemail },async (err, orders) => {
         if (err) {
           console.log("Error in fetching orders");
           res.json({ auth: false, orders: null,fromCache: isCached });
         } else {
           results = orders;
-          await client.set(uemail, JSON.stringify(results));
+          //await client.set(uemail, JSON.stringify(results));
           res.json({ auth: true, orders: orders, fromCache: isCached });
         }
 
-     });
+      });
 
-       console.log("from db");
+    //    console.log("from db");
       
-     }
+    // }
 
     
-  } catch (error) {
+  // } catch (error) {
 
-    console.log("Big error",error);
-    res.json({ auth: false, orders: null ,fromCache: isCached});
+  //   console.log("Big error",error);
+  //   res.json({ auth: false, orders: null ,fromCache: isCached});
    
-  }
+  // }
   
 
 
