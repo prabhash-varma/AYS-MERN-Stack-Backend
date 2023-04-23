@@ -18,8 +18,16 @@ const jwt = require("jsonwebtoken");
 const redis = require("redis");
 
 
+const Razorpay = require("razorpay");
+const shortid = require("shortid");
+var razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
+});
+
+
 const client =redis.createClient({
-    password: 'te2T4l9iVgYAEdiulyROUlBVM3XMBUP0',
+    password: process.env.REDIS_PASSWORD,
     socket: {
         host: 'redis-19386.c8.us-east-1-2.ec2.cloud.redislabs.com',
         port: 19386
@@ -118,6 +126,20 @@ app.get("/", function (req, res) {
 });
 
 
+
+
+app.post("/razorpay",(req,res)=>{
+  const options = {
+    amount: req.body.amount*100,  
+    currency: "INR",
+    receipt: shortid.generate(),
+    payment_capture: 1
+  };
+  razorpay.orders.create(options, function(err, order)
+  {
+   res.json({auth:true,id:order.id,amount:order.amount,currency:order.currency})
+  });
+})
 
 
 // Middleware
