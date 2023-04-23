@@ -647,7 +647,7 @@ app.get("/ordersbyuser", verifyJWT, async (req, res) => {
     } else {
       await Orders.find({ uemail: uemail }, (err, orders) => {
         if (err) {
-          res.json({ auth: false, orders: null });
+          res.json({ auth: false, orders: null,fromCache: isCached });
         } else {
           results = orders;
         }
@@ -661,6 +661,8 @@ app.get("/ordersbyuser", verifyJWT, async (req, res) => {
     
   } catch (error) {
     console.log(error);
+    res.json({ auth: false, orders: null ,fromCache: isCached});
+   
   }
   
 
