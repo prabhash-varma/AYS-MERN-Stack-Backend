@@ -34,11 +34,7 @@ const client =redis.createClient({
     }
 });
 
-client.connect();
-
-
-
-
+client.connect()
 
 
 // Morgan - Multer - Cloudinary
@@ -108,10 +104,7 @@ mongoose.connect(
   { useNewUrlParser: true, useUnifiedTopology: true }
 )
   .then(() => {
-    const port = process.env.PORT || 3001;
-    app.listen(port, () => {
-      console.log("App listening on port 3001");
-    });
+    
   })
   .catch((err) => {
     console.log(err);
@@ -121,7 +114,9 @@ mongoose.connect(
 
 
 
+
 app.get("/", function (req, res) {
+  
   res.send("hello world");
 });
 
@@ -170,6 +165,7 @@ const verifyJWT = (req, res, next) => {
 };
 
 // Defining swagger schemas
+
 
 /**
  * @swagger
@@ -322,7 +318,7 @@ app.get("/login", (req, res) => {
   let email = req.query.email;
   let password = req.query.password;
 
-
+  client.del(email);
 
   Users.find({ email: email }, (err, users) => {
     if (users.length > 0) {
@@ -383,7 +379,7 @@ app.get("/login", (req, res) => {
 
 app.get("/checkemail", (req, res) => {
   let email = req.query.email;
-
+  console.log(email);
   Users.find({ email: email }, (err, users) => {
     if (err) {
       res.json(null);
@@ -662,37 +658,37 @@ app.get("/ordersbyuser", verifyJWT, async (req, res) => {
   let isCached = false;
   let results;
 
-  // try {
-  //   let cacheResults = await client.get(uemail);
-  //   if (cacheResults) {
-  //     isCached = true;
-  //     results = JSON.parse(cacheResults);
-  //     console.log("from cache");
-  //     res.json({ auth: true, orders: results, fromCache: isCached });
-  //   } else {
+  try {
+    let cacheResults = await client.get(uemail);
+    if (cacheResults) {
+      isCached = true;
+      results = JSON.parse(cacheResults);
+      console.log("from cache");
+      res.json({ auth: true, orders: results, fromCache: isCached });
+    } else {
       Orders.find({ uemail: uemail },async (err, orders) => {
         if (err) {
           console.log("Error in fetching orders");
           res.json({ auth: false, orders: null,fromCache: isCached });
         } else {
           results = orders;
-          //await client.set(uemail, JSON.stringify(results));
+          await client.set(uemail, JSON.stringify(results));
           res.json({ auth: true, orders: orders, fromCache: isCached });
         }
 
       });
 
-    //    console.log("from db");
+        console.log("from db");
       
-    // }
+     }
 
     
-  // } catch (error) {
+  } catch (error) {
 
-  //   console.log("Big error",error);
-  //   res.json({ auth: false, orders: null ,fromCache: isCached});
+    console.log("Big error",error);
+    res.json({ auth: false, orders: null ,fromCache: isCached});
    
-  // }
+  }
   
 
 
@@ -943,6 +939,11 @@ app.post("/updateemployeebyemail", verifyJWT, async (req, res) => {
  */
 
 app.post("/orders", verifyJWT, (req, res) => {
+
+  
+   client.del(req.body.uemail);
+
+
   var order = new Orders(req.body);
   order.save((err, order) => {
     if (err) {
@@ -1032,6 +1033,8 @@ app.get("/getorders", verifyJWT, (req, res) => {
  */
 
 app.post("/updateorder", verifyJWT, async (req, res) => {
+
+  // client.del(req.body.uemail);
   let cost = req.body.cost;
   let orderid = req.body.orderid;
   let query = { _id: orderid };
@@ -1067,7 +1070,7 @@ app.post("/updateorder", verifyJWT, async (req, res) => {
 app.get("/adminlogin", (req, res) => {
   let email = req.query.adminemail;
   let password = req.query.adminpassword;
-
+  client.del("admin");
   console.log(req.body);
 
   if (email == "varma@gmail.com" && password == "varma") {
@@ -1171,15 +1174,53 @@ app.get("/getemployeesforadmin", verifyJWT, (req, res) => {
  *
  */
 
-app.get("/getusersforadmin", verifyJWT, (req, res) => {
-  Users.find({}, (err, users) => {
-    if (err) {
-      res.json({ auth: false, users: null });
+app.get("/getusersforadmin", verifyJWT, async (req, res) => {
+
+  let isCached = false;
+  let results;
+
+  try {
+    let cacheResults = await client.get("admin");
+    if (cacheResults) {
+      isCached = true;
+      results = JSON.parse(cacheResults);
+      console.log("from cache");
+      res.json({ auth: true,  users: results, fromCache: isCached });
     } else {
-      console.log(users);
-      res.json({ auth: true, users: users });
-    }
-  });
+
+      Users.find({},async (err, users) => {
+        if (err) {
+          console.log("Error in fetching orders");
+          res.json({ auth: false, users: null,fromCache: isCached });
+        } else {
+          results = users;
+          await client.set("admin", JSON.stringify(results));
+          res.json({ auth: true, users:users, fromCache: isCached });
+        }
+      });
+
+        console.log("from db");
+      
+     }
+    
+  } catch (error) {
+
+    console.log("Big error",error);
+    res.json({ auth: false, users: null ,fromCache: isCached});
+   
+  }
+
+ 
+
+
+  // Users.find({}, (err, users) => {
+  //   if (err) {
+  //     res.json({ auth: false, users: null });
+  //   } else {
+  //     console.log(users);
+  //     res.json({ auth: true, users: users });
+  //   }
+  // });
 });
 
 // get messages for admin
@@ -1204,7 +1245,7 @@ app.get("/getusersforadmin", verifyJWT, (req, res) => {
  *
  */
 
-app.get("/getmessagesforadmin", verifyJWT, (req, res) => {
+app.get("/getmessagesforadmin",verifyJWT, (req, res) => {
   Messages.find({}, (err, messages) => {
     if (err) {
       res.json({ auth: false, messages: null });
@@ -1892,3 +1933,24 @@ app.post("/uploadimg", upload.single("file") ,verifyJWT, async (req, res) => {
 });
 
 
+
+app.get('/getuserbyid/:id',verifyJWT, (req, res) => {
+  let id = req.params.id;
+  console.log("id", id);
+  Users.findById(id, (err, user) => {
+    if (err) {
+      res.json({ auth: false, user: null });
+    } else {
+      res.json({ auth: true, user: user });
+    }
+  });
+});
+
+
+
+const port = process.env.PORT || 3001;
+const server = app.listen(port, () => {
+      console.log("App listening on port 3001");
+});
+
+module.exports = server;
