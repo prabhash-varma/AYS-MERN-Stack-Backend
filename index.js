@@ -115,8 +115,10 @@ mongoose.connect(
 
 
 
-app.get("/", function (req, res) {
-  
+app.get("/", async function (req, res) {
+  let kp = await client.get("admin")
+  console.log(kp);
+  await client.del("admin");
   res.send("hello world");
 });
 
@@ -314,11 +316,11 @@ const verifyJWT = (req, res, next) => {
  *
  */
 
-app.get("/login", (req, res) => {
+app.get("/login", async (req, res) => {
   let email = req.query.email;
   let password = req.query.password;
 
-  client.del(email);
+ await client.del(email);
 
   Users.find({ email: email }, (err, users) => {
     if (users.length > 0) {
@@ -938,10 +940,10 @@ app.post("/updateemployeebyemail", verifyJWT, async (req, res) => {
  *
  */
 
-app.post("/orders", verifyJWT, (req, res) => {
+app.post("/orders", verifyJWT, async (req, res) => {
 
   
-   client.del(req.body.uemail);
+   await client.del(req.body.uemail);
 
 
   var order = new Orders(req.body);
@@ -1067,10 +1069,10 @@ app.post("/updateorder", verifyJWT, async (req, res) => {
 
 // For Admin Page
 
-app.get("/adminlogin", (req, res) => {
+app.get("/adminlogin",async (req, res) => {
   let email = req.query.adminemail;
   let password = req.query.adminpassword;
-  client.del("admin");
+  await client.del("admin");
   console.log(req.body);
 
   if (email == "varma@gmail.com" && password == "varma") {
