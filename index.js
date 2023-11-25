@@ -26,15 +26,18 @@ var razorpay = new Razorpay({
 });
 
 
-const client =redis.createClient({
-    password: "te2T4l9iVgYAEdiulyROUlBVM3XMBUP0",
+
+const client = redis.createClient({
+    password: '2Zfrl7v1CXti8ZWljhO89TQ8N3VFeQrH',
     socket: {
-        host: 'redis-19386.c8.us-east-1-2.ec2.cloud.redislabs.com',
-        port: 19386
+        host: 'redis-13741.c321.us-east-1-2.ec2.cloud.redislabs.com',
+        port: 13741
     }
 });
 
+
 client.connect()
+
 
 
 // Morgan - Multer - Cloudinary
