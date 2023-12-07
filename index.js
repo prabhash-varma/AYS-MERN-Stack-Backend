@@ -15,7 +15,7 @@ const bodyparser = require("body-parser");
 app.use(bodyparser.json());
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const redis = require("redis");
+// const redis = require("redis");
 
 
 const Razorpay = require("razorpay");
@@ -27,16 +27,16 @@ var razorpay = new Razorpay({
 
 
 
-const client = redis.createClient({
-    password: '2Zfrl7v1CXti8ZWljhO89TQ8N3VFeQrH',
-    socket: {
-        host: 'redis-13741.c321.us-east-1-2.ec2.cloud.redislabs.com',
-        port: 13741
-    }
-});
+// const client = redis.createClient({
+//     password: '2Zfrl7v1CXti8ZWljhO89TQ8N3VFeQrH',
+//     socket: {
+//         host: 'redis-13741.c321.us-east-1-2.ec2.cloud.redislabs.com',
+//         port: 13741
+//     }
+// });
 
 
-client.connect()
+// client.connect()
 
 
 
@@ -118,9 +118,9 @@ mongoose.connect('mongodb+srv://prabhash:prabhash@cluster0.cucjq6t.mongodb.net/?
 
 
 app.get("/", async function (req, res) {
-  let kp = await client.get("admin")
-  console.log(kp);
-  await client.del("admin");
+  //let kp = await client.get("admin")
+  //console.log(kp);
+  //await client.del("admin");
   res.send("hello world");
 });
 
@@ -322,7 +322,7 @@ app.get("/login", async (req, res) => {
   let email = req.query.email;
   let password = req.query.password;
 
- await client.del(email);
+ //await client.del(email);
 
   Users.find({ email: email }, (err, users) => {
     if (users.length > 0) {
@@ -663,20 +663,20 @@ app.get("/ordersbyuser", verifyJWT, async (req, res) => {
   let results;
 
   try {
-    let cacheResults = await client.get(uemail);
-    if (cacheResults) {
-      isCached = true;
-      results = JSON.parse(cacheResults);
-      console.log("from cache");
-      res.json({ auth: true, orders: results, fromCache: isCached });
-    } else {
+    //let cacheResults = await client.get(uemail);
+    // if (cacheResults) {
+    //   isCached = true;
+    //   results = JSON.parse(cacheResults);
+    //   console.log("from cache");
+    //   res.json({ auth: true, orders: results, fromCache: isCached });
+    // } else {
       Orders.find({ uemail: uemail },async (err, orders) => {
         if (err) {
           console.log("Error in fetching orders");
           res.json({ auth: false, orders: null,fromCache: isCached });
         } else {
           results = orders;
-          await client.set(uemail, JSON.stringify(results));
+          //await client.set(uemail, JSON.stringify(results));
           res.json({ auth: true, orders: orders, fromCache: isCached });
         }
 
@@ -684,7 +684,7 @@ app.get("/ordersbyuser", verifyJWT, async (req, res) => {
 
         console.log("from db");
       
-     }
+    // }
 
     
   } catch (error) {
@@ -945,7 +945,7 @@ app.post("/updateemployeebyemail", verifyJWT, async (req, res) => {
 app.post("/orders", verifyJWT, async (req, res) => {
 
   
-   await client.del(req.body.uemail);
+   //await client.del(req.body.uemail);
 
 
   var order = new Orders(req.body);
@@ -1074,7 +1074,7 @@ app.post("/updateorder", verifyJWT, async (req, res) => {
 app.get("/adminlogin",async (req, res) => {
   let email = req.query.adminemail;
   let password = req.query.adminpassword;
-  await client.del("admin");
+  //await client.del("admin");
   console.log(req.body);
 
   if (email == "varma@gmail.com" && password == "varma") {
@@ -1184,13 +1184,13 @@ app.get("/getusersforadmin", verifyJWT, async (req, res) => {
   let results;
 
   try {
-    let cacheResults = await client.get("admin");
-    if (cacheResults) {
-      isCached = true;
-      results = JSON.parse(cacheResults);
-      console.log("from cache");
-      res.json({ auth: true,  users: results, fromCache: isCached });
-    } else {
+    //let cacheResults = await client.get("admin");
+    // if (cacheResults) {
+    //   isCached = true;
+    //   results = JSON.parse(cacheResults);
+    //   console.log("from cache");
+    //   res.json({ auth: true,  users: results, fromCache: isCached });
+    // } else {
 
       Users.find({},async (err, users) => {
         if (err) {
@@ -1198,14 +1198,14 @@ app.get("/getusersforadmin", verifyJWT, async (req, res) => {
           res.json({ auth: false, users: null,fromCache: isCached });
         } else {
           results = users;
-          await client.set("admin", JSON.stringify(results));
+          // await client.set("admin", JSON.stringify(results));
           res.json({ auth: true, users:users, fromCache: isCached });
         }
       });
 
         console.log("from db");
       
-     }
+     // }
     
   } catch (error) {
 
